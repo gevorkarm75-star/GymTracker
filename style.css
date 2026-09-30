@@ -16,3 +16,6 @@ html,body{overflow-x:hidden;width:100%}
 .progress-chart svg text{fill:#737d8a;font-size:12px}
 .progress-chart svg circle{fill:#6ee7b7}
 .chart-summary{font-size:11px;color:#8a94a1;padding:8px 4px 2px;text-align:center}
+
+/* Safari: native mobile feel and prevent accidental page scaling */
+html{touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:100%;overscroll-behavior-x:none}body{touch-action:manipulation;-webkit-tap-highlight-color:transparent;overscroll-behavior-x:none}.phone-clock{font-variant-numeric:tabular-nums;font-size:13px;font-weight:800;color:#f5f7fa;margin-top:5px;letter-spacing:.3px}.topbar>div:first-child{min-width:0}
