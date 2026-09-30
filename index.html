@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111318">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GymTracker">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.svg">
+<title>GymTracker</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <header>
+    <div>
+      <div class="brand">GYM<span>TRACKER</span></div>
+      <div class="subtitle">Твои тренировки</div>
+    </div>
+    <button id="todayBtn" class="ghost">Сегодня</button>
+  </header>
+
+  <main>
+    <section class="calendar-card">
+      <div class="monthbar">
+        <button id="prev" class="round">‹</button>
+        <h2 id="monthTitle"></h2>
+        <button id="next" class="round">›</button>
+      </div>
+      <div class="weekdays" id="weekdays"></div>
+      <div class="days" id="days"></div>
+    </section>
+
+    <section class="workout-card">
+      <div class="selected-date" id="selectedDate"></div>
+      <div class="muscles" id="muscles"></div>
+      <div class="exercise-head">
+        <h3 id="groupTitle"></h3>
+        <button id="addBtn" class="add">＋ Добавить</button>
+      </div>
+      <div id="exerciseList" class="exercise-list"></div>
+    </section>
+  </main>
+
+  <footer>Данные сохраняются на этом устройстве • работает без интернета после первого открытия</footer>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
