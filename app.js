@@ -1,71 +1,17 @@
-const groups=[["chest","Грудь"],["back","Спина"],["legs","Ноги"],["arms","Руки"],["shoulders","Плечи"],["abs","Пресс"]];
-const weekdays=["Пн","Вт","Ср","Чт","Пт","Сб","Вс"];
-const key="gymtracker.v1";
-let data=JSON.parse(localStorage.getItem(key)||"{}");
-let selected=new Date(); selected.setHours(12,0,0,0);
-let month=new Date(selected); month.setDate(1);
-let group="chest";
-
-const $=s=>document.querySelector(s);
-const pad=n=>String(n).padStart(2,"0");
-const dateKey=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
-const save=()=>localStorage.setItem(key,JSON.stringify(data));
-const fmt=d=>d.toLocaleDateString("ru-RU",{day:"numeric",month:"long",year:"numeric"});
-const same=(a,b)=>dateKey(a)===dateKey(b);
-
-function render(){
-  renderCalendar(); renderGroups(); renderExercises();
-}
-function renderCalendar(){
-  $("#monthTitle").textContent=month.toLocaleDateString("ru-RU",{month:"long",year:"numeric"});
-  $("#weekdays").innerHTML=weekdays.map(x=>`<div>${x}</div>`).join("");
-  const first=(month.getDay()+6)%7;
-  const days=new Date(month.getFullYear(),month.getMonth()+1,0).getDate();
-  let html="";
-  for(let i=0;i<first;i++) html+="<span></span>";
-  const now=new Date();
-  for(let d=1;d<=days;d++){
-    const x=new Date(month.getFullYear(),month.getMonth(),d,12);
-    const k=dateKey(x), has=Object.values(data[k]||{}).some(a=>Array.isArray(a)&&a.length);
-    html+=`<button class="${same(x,selected)?"selected ":""}${same(x,now)?"today ":""}${has?"has-workout":""}" data-day="${d}">${d}</button>`;
-  }
-  $("#days").innerHTML=html;
-  document.querySelectorAll("#days button").forEach(b=>b.onclick=()=>{selected=new Date(month.getFullYear(),month.getMonth(),+b.dataset.day,12);render()});
-}
-function renderGroups(){
-  $("#selectedDate").textContent=fmt(selected);
-  $("#muscles").innerHTML=groups.map(([id,n])=>`<button class="${id===group?"active":""}" data-group="${id}">${n}</button>`).join("");
-  document.querySelectorAll("#muscles button").forEach(b=>b.onclick=()=>{group=b.dataset.group;render()});
-  $("#groupTitle").textContent=groups.find(x=>x[0]===group)[1];
-}
-function renderExercises(){
-  const k=dateKey(selected); const arr=(data[k]?.[group])||[];
-  if(!arr.length){$("#exerciseList").innerHTML='<div class="empty">Пока нет упражнений.<div class="hint">Нажми «＋ Добавить», чтобы записать тренировку.</div></div>';return}
-  $("#exerciseList").innerHTML=arr.map((e,i)=>`<div class="exercise">
-    <div class="row">
-      <input class="name" data-i="${i}" data-field="name" value="${escapeHtml(e.name)}" placeholder="Название упражнения">
-      <input class="metric" type="number" min="1" data-i="${i}" data-field="sets" value="${e.sets}">
-      <input class="metric" type="number" min="1" data-i="${i}" data-field="reps" value="${e.reps}">
-      <button class="delete" data-del="${i}">×</button>
-    </div>
-    <div class="hint">Подходы × Повторы</div>
-  </div>`).join("");
-  document.querySelectorAll("#exerciseList input").forEach(inp=>inp.onchange=()=>{
-    const i=+inp.dataset.i; const f=inp.dataset.field;
-    if(!data[k])data[k]={}; if(!data[k][group])data[k][group]=[];
-    data[k][group][i][f]=f==="name"?inp.value:Math.max(1,+inp.value||1); save(); renderCalendar();
-  });
-  document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{data[k][group].splice(+b.dataset.del,1); if(!data[k][group].length)delete data[k][group]; if(!Object.keys(data[k]||{}).length)delete data[k];save();render()});
-}
-function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
-$("#addBtn").onclick=()=>{
-  const k=dateKey(selected); if(!data[k])data[k]={}; if(!data[k][group])data[k][group]=[];
-  data[k][group].push({name:"Новое упражнение",sets:3,reps:10}); save(); render();
-  setTimeout(()=>{const inputs=document.querySelectorAll("#exerciseList .name"); inputs[inputs.length-1]?.focus(); inputs[inputs.length-1]?.select()},0);
-};
-$("#prev").onclick=()=>{month=new Date(month.getFullYear(),month.getMonth()-1,1,12);render()};
-$("#next").onclick=()=>{month=new Date(month.getFullYear(),month.getMonth()+1,1,12);render()};
-$("#todayBtn").onclick=()=>{selected=new Date();selected.setHours(12,0,0,0);month=new Date(selected);month.setDate(1);render()};
-render();
-
-if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
+const groups=[["chest","Грудь"],["back","Спина"],["legs","Ноги"],["shoulders","Плечи"],["arms","Руки"],["abs","Пресс"]];
+const library=[["Жим штанги лёжа","Грудь"],["Жим гантелей на наклонной","Грудь"],["Разводка гантелей","Грудь"],["Подтягивания","Спина"],["Тяга верхнего блока","Спина"],["Тяга штанги в наклоне","Спина"],["Приседания со штангой","Ноги"],["Жим ногами","Ноги"],["Разгибание ног","Ноги"],["Жим гантелей сидя","Плечи"],["Разведения гантелей в стороны","Плечи"],["Сгибание рук со штангой","Руки"],["Разгибание рук на блоке","Руки"],["Скручивания","Пресс"],["Подъём ног","Пресс"]];
+var key="gymtracker.v2",data=JSON.parse(localStorage.getItem(key)||"{}"),profile=JSON.parse(localStorage.getItem("gymtracker.profile")||"null"),selected=new Date(),month=new Date(),muscle="Грудь";selected.setHours(12,0,0,0);month.setDate(1);var $=function(s){return document.querySelector(s)},pad=function(n){return String(n).padStart(2,"0")},dateKey=function(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())},fmt=function(d){return d.toLocaleDateString("ru-RU",{day:"numeric",month:"long",year:"numeric"})},save=function(){localStorage.setItem(key,JSON.stringify(data))},has=function(k){return !!(data[k]&&data[k].exercises&&data[k].exercises.length)};
+function init(){if(profile){$("#onboarding").classList.add("hidden");$("#mainApp").classList.remove("hidden");renderAll()}else $("#onboarding").classList.remove("hidden")}
+$("#profileForm").onsubmit=function(e){e.preventDefault();profile={name:$("#pName").value,age:+$("#pAge").value,height:+$("#pHeight").value,weight:+$("#pWeight").value,goal:$("#pGoal").value,level:$("#pLevel").value,weights:[{date:dateKey(new Date()),value:+$("#pWeight").value}]};localStorage.setItem("gymtracker.profile",JSON.stringify(profile));init()};
+document.querySelectorAll("[data-page]").forEach(function(b){b.onclick=function(){showPage(b.dataset.page)}});$("#profileAvatar").onclick=function(){showPage("profile")};
+function showPage(p){document.querySelectorAll(".page").forEach(function(x){x.classList.remove("active")});$("#page-"+p).classList.add("active");document.querySelectorAll("[data-page]").forEach(function(x){x.classList.toggle("active",x.dataset.page===p)});renderAll()}
+function renderAll(){if(!profile)return;$("#greeting").textContent="Привет, "+profile.name.split(" ")[0]+" 👋";$("#profileName").textContent=profile.name;$("#profileDetails").textContent=profile.age+" лет · "+profile.height+" см · "+profile.weight+" кг · "+profile.level;$("#profileGoal").textContent=profile.goal;$("#bigAvatar").textContent=(profile.name[0]||"G").toUpperCase();$("#profileAvatar").textContent=(profile.name[0]||"G").toUpperCase();renderHome();renderCalendar();renderPlan();renderLibrary();renderProgress()}
+function renderHome(){var k=dateKey(new Date()),d=data[k];$("#todayTitle").textContent=d&&d.exercises&&d.exercises.length?"Сегодня: "+d.exercises.length+" упражнений":"Твоя тренировка";$("#todayMeta").textContent=d&&d.exercises&&d.exercises.length?"План готов — можно начинать":"Добавь упражнения через План";$("#currentWeight").textContent=profile.weight;var keys=Object.keys(data),now=new Date(),week=keys.filter(function(x){var z=new Date(x);return (now-z)/86400000<7&&(now-z)>=0});$("#weekWorkouts").textContent=week.filter(function(x){return data[x].completed}).length;$("#weekVolume").textContent=week.reduce(function(s,x){return s+(data[x].exercises||[]).reduce(function(a,e){return a+(e.sets||0)*(e.reps||0)*(e.weight||0)},0)},0);var done=keys.filter(function(x){return data[x].completed}).sort(),last=done.pop();$("#lastWorkout").textContent=last?"Тренировка "+fmt(new Date(last)):"Пока нет завершённых тренировок"}
+function renderCalendar(){$("#monthTitle").textContent=month.toLocaleDateString("ru-RU",{month:"long",year:"numeric"});$("#weekdays").innerHTML=["Пн","Вт","Ср","Чт","Пт","Сб","Вс"].map(function(x){return "<div>"+x+"</div>"}).join("");var first=(month.getDay()+6)%7,days=new Date(month.getFullYear(),month.getMonth()+1,0).getDate(),html="";for(var i=0;i<first;i++)html+="<span></span>";for(var d=1;d<=days;d++){var x=new Date(month.getFullYear(),month.getMonth(),d,12),k=dateKey(x),c=(dateKey(x)===dateKey(selected)?"selected ":"")+(dateKey(x)===dateKey(new Date())?"today ":"")+(has(k)?"has-workout":"");html+="<button class=\""+c+"\" data-day=\""+d+"\">"+d+"</button>"}$("#days").innerHTML=html;document.querySelectorAll("#days button").forEach(function(b){b.onclick=function(){selected=new Date(month.getFullYear(),month.getMonth(),+b.dataset.day,12);renderPlan()}})}
+$("#prev").onclick=function(){month=new Date(month.getFullYear(),month.getMonth()-1,1,12);renderCalendar()};$("#next").onclick=function(){month=new Date(month.getFullYear(),month.getMonth()+1,1,12);renderCalendar()};$("#addPlan").onclick=function(){addExercise("Грудь")};
+function renderPlan(){renderCalendar();$("#selectedDate").textContent=fmt(selected);var k=dateKey(selected),arr=data[k]&&data[k].exercises||[];$("#planList").innerHTML=arr.length?arr.map(function(e,i){return "<div class=\"plan-item\"><div><strong>"+e.name+"</strong><br><small>"+e.sets+" подхода × "+e.reps+" повторений · "+(e.weight||0)+" кг</small></div><button class=\"icon-btn\" data-remove=\""+i+"\">×</button></div>"}).join(""):"<div class=\"card empty\">На этот день тренировка не запланирована.<br><small>Нажми ＋, чтобы добавить упражнение.</small></div>";document.querySelectorAll("[data-remove]").forEach(function(b){b.onclick=function(){arr.splice(+b.dataset.remove,1);save();renderPlan()}})}
+function addExercise(group){var found=library.find(function(x){return x[1]===group}),name=found?found[0]:"Новое упражнение",k=dateKey(selected);if(!data[k])data[k]={exercises:[]};data[k].exercises.push({name:name,group:group,sets:3,reps:10,weight:0});save();showPage("plan")}
+function renderLibrary(){var q=$("#exerciseSearch").value.toLowerCase();$("#muscles").innerHTML=groups.map(function(g){return "<button class=\""+(muscle===g[1]?"active":"")+"\" data-muscle=\""+g[1]+"\">"+g[1]+"</button>"}).join("");document.querySelectorAll("[data-muscle]").forEach(function(b){b.onclick=function(){muscle=b.dataset.muscle;renderLibrary()}});var list=library.filter(function(x){return x[1]===muscle&&x[0].toLowerCase().indexOf(q)>=0});$("#exerciseLibrary").innerHTML=list.map(function(x){return "<div class=\"exercise-item\"><div><strong>"+x[0]+"</strong><br><small>"+x[1]+"</small></div><button class=\"icon-btn\" data-lib=\""+x[0]+"\">＋</button></div>"}).join("");document.querySelectorAll("[data-lib]").forEach(function(b){b.onclick=function(){addExercise(muscle)}})}$("#exerciseSearch").oninput=renderLibrary;
+$("#startWorkout").onclick=openWorkout;function openWorkout(){var k=dateKey(new Date()),arr=data[k]&&data[k].exercises||[];$("#workoutTitle").textContent=arr.length?"Сегодня · "+arr.length+" упражнений":"Свободная тренировка";$("#workoutExercises").innerHTML=arr.length?arr.map(function(e,i){return "<div class=\"card\"><strong>"+e.name+"</strong><div class=\"set-row\"><span>Подходы / Вес</span><input type=\"number\" min=\"1\" value=\""+e.sets+"\" data-set=\""+i+"\"><input type=\"number\" min=\"0\" value=\""+(e.weight||0)+"\" data-weight=\""+i+"\"></div></div>"}).join(""):"<div class=\"empty\">Добавь упражнения в План перед началом.</div>";$("#workoutModal").classList.remove("hidden")}$("#closeWorkout").onclick=function(){$("#workoutModal").classList.add("hidden")};$("#finishWorkout").onclick=function(){var k=dateKey(new Date());if(!data[k])data[k]={exercises:[]};document.querySelectorAll("[data-set]").forEach(function(i){data[k].exercises[+i.dataset.set].sets=+i.value||1});document.querySelectorAll("[data-weight]").forEach(function(i){data[k].exercises[+i.dataset.weight].weight=+i.value||0});data[k].completed=true;save();$("#workoutModal").classList.add("hidden");renderAll();showPage("progress")};
+function renderProgress(){var keys=Object.keys(data),done=keys.filter(function(k){return data[k].completed});$("#pWeight").textContent=profile.weight;$("#pWorkouts").textContent=done.length;var ex={};done.forEach(function(k){(data[k].exercises||[]).forEach(function(e){ex[e.name]=Math.max(ex[e.name]||0,e.weight||0)})});$("#pPR").textContent=Object.keys(ex).length;$("#weightHistory").innerHTML=(profile.weights||[]).slice().reverse().map(function(x){return "<div class=\"history-row\"><span>"+fmt(new Date(x.date))+"</span><strong>"+x.value+" кг</strong></div>"}).join("")||"<div class=\"empty\">Добавляй измерения в профиль.</div>";$("#strengthHistory").innerHTML=Object.keys(ex).map(function(n){return "<div class=\"history-row\"><span>"+n+"</span><strong>"+ex[n]+" кг</strong></div>"}).join("")||"<div class=\"empty\">Пока нет силовых данных.</div>"}
+document.querySelectorAll("[data-profile-action]").forEach(function(b){b.onclick=function(){var a=b.dataset.profileAction;if(a==="reset"&&confirm("Сбросить профиль и данные?")){localStorage.removeItem("gymtracker.profile");localStorage.removeItem(key);location.reload()}else if(a==="data")alert(profile.name+"\n"+profile.age+" лет\n"+profile.height+" см\n"+profile.weight+" кг");else if(a==="goal")alert("Цель: "+profile.goal+"\nУровень: "+profile.level);else if(a==="history")showPage("progress")}});init();
