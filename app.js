@@ -242,7 +242,15 @@ function finishCurrentWorkout(){
   renderAll();
   showCompletion(prs,k);
 }
-$("#finishWorkout").onclick=finishCurrentWorkout;
+$("#finishWorkout").onclick=finishCurrentWorkout;document.addEventListener("click",function(e){
+  var btn=e.target.closest&&e.target.closest("#finishWorkout");
+  if(btn){
+    e.preventDefault();
+    e.stopPropagation();
+    finishCurrentWorkout();
+  }
+},true);
+
 $("#closeWorkout").onclick=function(){
   clearWorkoutTimers();
   if(window.restIntervals){
