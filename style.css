@@ -8,3 +8,11 @@ html,body{overflow-x:hidden;width:100%}
 .workout-card{margin-bottom:12px}.workout-exercise-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:12px}.workout-timer{font-variant-numeric:tabular-nums;font-size:24px;font-weight:850}.timer-status{color:#6ee7b7;font-size:11px;margin-top:2px}.timer-actions{display:flex;gap:6px;margin-top:7px}.timer-btn{background:#20262e;color:#dbe1e8;border-radius:9px;padding:7px 9px;font-size:11px}.timer-btn.primary-timer{background:#6ee7b7;color:#07100b;font-weight:800}
 .set-head,.set-grid{display:grid;grid-template-columns:36px 1fr 1fr;gap:7px;align-items:center}.set-head{color:#707987;font-size:10px;padding:0 4px 4px}.set-grid{margin:6px 0}.set-grid .set-num{color:#707987;text-align:center;font-size:12px}.set-grid input{background:#0d1014;border:1px solid #2a313b;border-radius:9px;padding:9px;width:100%;min-width:0}
 .progress-exercise{padding:13px 0;border-bottom:1px solid #252b34}.progress-exercise:last-child{border-bottom:0}.progress-line{display:flex;justify-content:space-between;gap:10px;font-size:13px}.progress-meta{color:#7e8794;font-size:11px;margin-top:5px;line-height:1.5}
+
+.progress-select{width:100%;background:#0d1014;border:1px solid #2a313b;color:#f5f7fa;border-radius:12px;padding:11px;margin-bottom:12px;outline:0}
+.progress-chart{background:#0d1014;border:1px solid #252b34;border-radius:14px;padding:8px;overflow:hidden}
+.progress-chart svg{display:block;width:100%;height:auto;color:#6ee7b7}
+.progress-chart svg line{stroke:#303742;stroke-width:1}
+.progress-chart svg text{fill:#737d8a;font-size:12px}
+.progress-chart svg circle{fill:#6ee7b7}
+.chart-summary{font-size:11px;color:#8a94a1;padding:8px 4px 2px;text-align:center}
