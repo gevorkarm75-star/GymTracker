@@ -201,6 +201,56 @@ function bindWorkoutControls(){
 document.querySelectorAll("[data-timer-start]").forEach(function(b){b.onclick=function(){var i=+b.dataset.timerStart;if(workoutTimers[i].running){workoutTimers[i].running=false;clearInterval(workoutTimerIntervals[i])}else{workoutTimers[i].running=true;workoutTimerIntervals[i]=setInterval(function(){workoutTimers[i].elapsed++;$("#timer"+i).textContent=formatTime(workoutTimers[i].elapsed)},1000)}b.textContent=workoutTimers[i].running?"Пауза":"Старт";$("#timerStatus"+i).textContent=workoutTimers[i].running?"Идёт время упражнения":"Пауза"}});
 document.querySelectorAll("[data-timer-stop]").forEach(function(b){b.onclick=function(){var i=+b.dataset.timerStop;workoutTimers[i].running=false;clearInterval(workoutTimerIntervals[i]);workoutTimers[i].elapsed=0;$("#timer"+i).textContent="00:00";$("#timerStatus"+i).textContent="Сброшено";document.querySelector("[data-timer-start=\""+i+"\"]").textContent="Старт"}});
 document.querySelectorAll("[data-set-start]").forEach(function(b){b.onclick=function(){var key=b.dataset.setStart.split("-"),i=+key[0],j=+key[1],st=setTimers[i][j];if(st.done)return;if(st.running){st.running=false;clearInterval(setTimerIntervals[b.dataset.setStart]);st.done=true;b.textContent="✓ "+formatTime(st.elapsed);b.classList.remove("primary-timer");b.classList.add("done");$("#setTime"+i+"-"+j).textContent="Время: "+formatTime(st.elapsed);startRestTimer(i,j,90)}else{st.running=true;b.textContent="Завершить · "+formatTime(st.elapsed);setTimerIntervals[b.dataset.setStart]=setInterval(function(){st.elapsed++;b.textContent="Завершить · "+formatTime(st.elapsed)},1000)}}});}
+function finishCurrentWorkout(){
+  var k=dateKey(new Date()),d=data[k];
+  if(!d||!d.exercises||!d.exercises.length){
+    alert("Добавь упражнения в План перед завершением тренировки.");
+    return;
+  }
+  var prs=[];
+  d.exercises.forEach(function(e,i){
+    var previous=getExerciseHistory(e.name);
+    var oldMax=previous.reduce(function(m,row){return Math.max(m,row.weight||0)},0);
+    var details=[];
+    var rows=document.querySelectorAll('[data-reps^="'+i+'-"],[data-setweight^="'+i+'-"]');
+    var count=e.setDetails&&e.setDetails.length?e.setDetails.length:(e.sets||3);
+    for(var j=0;j<count;j++){
+      var repEl=document.querySelector('[data-reps="'+i+'-'+j+'"]');
+      var weightEl=document.querySelector('[data-setweight="'+i+'-'+j+'"]');
+      var reps=repEl?Math.max(0,+repEl.value||0):+(e.reps||0);
+      var weight=weightEl?Math.max(0,+weightEl.value||0):+(e.weight||0);
+      var st=setTimers[i]&&setTimers[i][j]?setTimers[i][j].elapsed:0;
+      details.push({reps:reps,weight:weight,setTime:st});
+    }
+    e.setDetails=details;
+    e.sets=details.length;
+    e.reps=details.length?details[0].reps:(e.reps||0);
+    e.weight=details.reduce(function(m,x){return Math.max(m,x.weight||0)},0);
+    e.timerSeconds=workoutTimers[i]?workoutTimers[i].elapsed:0;
+    var newMax=e.weight||0;
+    if(newMax>oldMax&&newMax>0)prs.push(e.name+" — "+newMax+" кг");
+  });
+  d.completed=true;
+  d.completedAt=new Date().toISOString();
+  save();
+  clearWorkoutTimers();
+  if(window.restIntervals){
+    Object.keys(window.restIntervals).forEach(function(key){clearInterval(window.restIntervals[key])});
+    window.restIntervals={};
+  }
+  $("#workoutModal").classList.add("hidden");
+  renderAll();
+  showCompletion(prs,k);
+}
+$("#finishWorkout").onclick=finishCurrentWorkout;
+$("#closeWorkout").onclick=function(){
+  clearWorkoutTimers();
+  if(window.restIntervals){
+    Object.keys(window.restIntervals).forEach(function(key){clearInterval(window.restIntervals[key])});
+    window.restIntervals={};
+  }
+  $("#workoutModal").classList.add("hidden");
+};
 function startRestTimer(i,j,seconds){var el=$("#restTime"+i+"-"+j);if(!el)return;var left=seconds;el.textContent="Отдых "+formatTime(left);var key="rest-"+i+"-"+j;if(window.restIntervals&&window.restIntervals[key])clearInterval(window.restIntervals[key]);window.restIntervals=window.restIntervals||{};window.restIntervals[key]=setInterval(function(){left--;el.textContent=left>0?"Отдых "+formatTime(left):"Готово!";if(left<=0){clearInterval(window.restIntervals[key]);notifyRestDone()}},1000)}
 document.querySelectorAll("[data-profile-action]").forEach(function(b){b.onclick=function(){var a=b.dataset.profileAction;if(a==="reset"&&confirm("Сбросить профиль и данные?")){localStorage.removeItem("gymtracker.profile");localStorage.removeItem(key);location.reload()}else if(a==="data")alert(profile.name+"\\n"+profile.age+" лет\\n"+profile.height+" см\\n"+profile.weight+" кг");else if(a==="goal")alert("Цель: "+profile.goal+"\\nУровень: "+profile.level);else if(a==="history")showPage("progress")}});
 $("#saveTemplate").onclick=function(){var name=prompt("Название шаблона:","Моя тренировка");if(name)addTemplate(name)};
