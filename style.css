@@ -58,3 +58,30 @@ h1{font-weight:850}h2{font-weight:800}
 .history-row{border-color:#292f36}.progress-chart{border-color:#292f36}.progress-chart svg circle{fill:var(--accent)}.progress-chart svg{color:var(--accent)}
 .form input,.form select{background:#15191e;border-color:#2a3037}.onboarding-wrap h1 strong{color:var(--accent)}
 @media(min-width:650px){#app{max-width:430px;padding-top:8px}.tabbar{bottom:10px}}
+
+/* v11 — reference render fidelity */
+body{background:radial-gradient(circle at 50% -12%,#18212a 0,#0b0e12 32%,#07090c 100%)!important}
+#app{background:transparent}
+.topbar{height:58px;display:flex;align-items:center;justify-content:space-between;padding-top:8px}.topbar>div{display:flex;flex-direction:column}.topbar .brand{font-size:18px}.topbar .subtitle{order:2;margin-top:2px;font-size:11px;color:#a5acb5}.topbar .phone-clock{position:absolute;right:50px;top:12px;font-size:10px}
+.avatar{order:2;display:grid;place-items:center;font-weight:700}
+.hero-premium{min-height:245px;padding:18px 16px;border-radius:19px;background:linear-gradient(180deg,#1b2229aa,#11151a),radial-gradient(circle at 78% 30%,#49515a55,transparent 40%);border:1px solid #323941}
+.hero-premium:after{content:"";position:absolute;inset:auto -40px -75px 35%;height:210px;background:radial-gradient(circle,#59616a45,transparent 64%);filter:blur(12px)}
+.hero-copy{width:64%;align-self:flex-end}.hero h1{font-size:28px;max-width:210px;margin:7px 0}.hero-art{width:215px;height:215px;right:-34px;bottom:-38px;font-size:100px;background:radial-gradient(circle at 42% 35%,#3d444c,#1a1e23 58%,#101318 70%);box-shadow:inset 0 0 45px #0008}
+.week-strip{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin:8px 0 10px}.week-strip span{height:35px;border-radius:11px;background:#14181d;border:1px solid #252b32;display:grid;place-items:center;color:#737b86;font-size:10px}.week-strip span:nth-child(1),.week-strip span:nth-child(2),.week-strip span:nth-child(3){background:#242b31;color:#fff}.week-strip span:nth-child(3){border-color:#ff6b18;color:#ff8a28}
+.stats-grid{grid-template-columns:repeat(3,1fr)}.stat{min-height:73px;display:flex;flex-direction:column;justify-content:center}.stat strong{font-size:18px;color:#f1f3f5}.stat span{font-size:9px;margin-top:3px}
+.featured-card{min-height:88px}.featured-card .card-title{display:flex;justify-content:space-between}.accent-dot{width:7px;height:7px;border-radius:50%;background:#ff6b18;box-shadow:0 0 12px #ff6b18}
+.level-card{display:flex;justify-content:space-between;align-items:center;min-height:82px}.level-badge{width:42px;height:42px;display:grid;place-items:center;border-radius:14px;font-size:21px}
+.page{animation:pageIn .22s ease}@keyframes pageIn{from{opacity:.4;transform:translateY(4px)}to{opacity:1;transform:none}}
+.page-title h1{font-size:28px;margin-top:2px}
+.monthbar{padding:2px 0 9px}.weekdays{color:#6f7781;font-size:9px}.days{gap:3px}.days button{border-radius:9px}
+.plan-item,.stack>.card{border-radius:14px;background:linear-gradient(145deg,#181d22,#12161a)}
+.exercise-item{grid-template-columns:62px 1fr 34px;min-height:79px}.exercise-thumb{width:62px;height:62px;background:#20262c}
+.exercise-detail-image{background:#151a1f}
+.muscle-overview{grid-template-columns:1fr 1fr}.muscle-overview button{min-height:88px}.muscle-overview button:nth-child(1){grid-column:span 2;min-height:100px}
+.progress-chart{background:linear-gradient(180deg,#171c21,#101419);border-radius:15px;min-height:170px}
+.profile-card{display:grid;grid-template-columns:68px 1fr;gap:14px;align-items:center;min-height:105px}.big-avatar{width:68px;height:68px;border-radius:50%;border:2px solid #40464e}
+.menu-card{overflow:hidden}.menu-card button{background:transparent}
+.tabbar{box-shadow:0 -10px 35px #0008}.tabbar:before{content:"";position:absolute;left:50%;transform:translateX(-50%);top:-1px;width:70px;height:2px;background:#ff6b18;opacity:.55;border-radius:2px}
+.fab,.tabbar .plus{background:linear-gradient(145deg,#ff8a22,#ff5c00)!important;box-shadow:0 7px 25px #ff650050!important}
+button:active{transform:scale(.97)}
+@media(max-width:380px){#app{padding-left:10px;padding-right:10px}.hero-premium{min-height:220px}.hero-art{width:185px;height:185px}.hero h1{font-size:25px}}
