@@ -85,3 +85,23 @@ body{background:radial-gradient(circle at 50% -12%,#18212a 0,#0b0e12 32%,#07090c
 .fab,.tabbar .plus{background:linear-gradient(145deg,#ff8a22,#ff5c00)!important;box-shadow:0 7px 25px #ff650050!important}
 button:active{transform:scale(.97)}
 @media(max-width:380px){#app{padding-left:10px;padding-right:10px}.hero-premium{min-height:220px}.hero-art{width:185px;height:185px}.hero h1{font-size:25px}}
+
+/* Upper-body ready program */
+.program-intro{padding:17px;margin-bottom:12px}
+.program-intro h2{font-size:21px;margin:6px 0}
+.program-next{margin-top:12px;padding:10px 12px;border-radius:11px;background:#211a15;color:#ff8a24;font-size:12px;font-weight:700}
+.program-shortcut{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0;padding:15px}
+.program-shortcut h2{font-size:16px;margin:4px 0}
+.program-shortcut p{font-size:11px;margin:0}
+.program-card{padding:15px}
+.program-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.program-card-head h2{font-size:19px;margin:4px 0}
+.program-card-head p{font-size:11px;margin:0}
+.program-start{margin-top:0;white-space:nowrap;padding:10px 13px;min-height:40px}
+.program-exercises{margin-top:13px;border-top:1px solid #292f36}
+.program-exercise{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #292f36;font-size:12px}
+.program-exercise:last-child{border-bottom:0}
+.program-exercise small{color:#ff8a24;font-weight:700;white-space:nowrap}
+.tabbar{grid-template-columns:repeat(6,1fr)}
+.tabbar button{font-size:8px}
+.tabbar button span{font-size:16px}
